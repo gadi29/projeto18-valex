@@ -6,5 +6,5 @@ export async function rechargeCard (req: Request, res: Response) {
   const amount: number = Number(req.body.amount);
 
   await rechargesServices.rechargeCard(id, amount);
-  res.send('Cartão recarregado com sucesso!');
+  res.send('Card recharged successfully!');
 }

@@ -13,13 +13,13 @@ import * as confirm from './confirmations.js';
 
 export async function createCard (APIKey: any, cardDetails: any) {
   const company:object = await companyRepository.findByApiKey(APIKey);
-  if(!company) throw { code: 'NotFound', message: 'Empresa não encontrada.' }
+  if(!company) throw { code: 'NotFound', message: 'Company not found.' }
   
   const employee: any = await employeeRepository.findById(cardDetails.employeeId);
-  if (!employee) throw { code: 'NotFound', message: 'Funcionário não encontrado.' }
+  if (!employee) throw { code: 'NotFound', message: 'Employee not found.' }
 
   const existTypeCard: object = await cardRepository.findByTypeAndEmployeeId(cardDetails.type, cardDetails.employeeId);
-  if (existTypeCard) throw { code: 'Conflict', message: 'Este funcionário já possui um cartão deste tipo.' }
+  if (existTypeCard) throw { code: 'Conflict', message: 'This employee already has a card of this type.' }
 
   const number: string = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
 
@@ -46,9 +46,9 @@ export async function activateCard (id: number, cardData: any) {
   const card: any = await confirm.existCard(id);
   await confirm.expiredCard(card);
 
-  if(card.password) throw { code: 'BadRequest', message: 'Este cartão já foi ativado.' }
+  if(card.password) throw { code: 'BadRequest', message: 'This card has already been activated.' }
   
-  if(cardData.securityCode !== cryptr.decrypt(card.securityCode)) throw { code: 'Unauthorized', message: 'Código de segurança incorreto.' }
+  if(cardData.securityCode !== cryptr.decrypt(card.securityCode)) throw { code: 'Unauthorized', message: 'Incorrect security code.' }
 
   const passwordHash: string = bcrypt.hashSync(cardData.password, 10);
 
@@ -64,8 +64,8 @@ export async function visualizeCard (cardId: number, password: string) {
 
   const securityCode: string = cryptr.decrypt(card.securityCode);
   let cardSituation: string;
-  if (card.isBlocked) cardSituation = 'Cartão bloqueado';
-  else cardSituation = 'Cartão desbloqueado';
+  if (card.isBlocked) cardSituation = 'Blocked';
+  else cardSituation = 'Unlocked';
 
   return { 
     number: card.number, 
@@ -104,7 +104,7 @@ export async function blockCard (id: number, password: string) {
   await confirm.cardActivated(card);
   await confirm.passwordConfirmation(card, password);
 
-  if(card.isBlocked) throw { code: 'BadRequest', message: 'Este cartão já está bloqueado.' }
+  if(card.isBlocked) throw { code: 'BadRequest', message: 'This card is already blocked.' }
 
   await cardRepository.update(id, { isBlocked: true });
 
@@ -117,7 +117,7 @@ export async function unblockCard (id: number, password: string) {
   await confirm.cardActivated(card);
   await confirm.passwordConfirmation(card, password);
 
-  if(!card.isBlocked) throw { code: 'BadRequest', message: 'Este cartão não está bloqueado.' }
+  if(!card.isBlocked) throw { code: 'BadRequest', message: 'This card is not blocked.' }
 
   await cardRepository.update(id, { isBlocked: false });
 

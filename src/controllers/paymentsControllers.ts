@@ -6,7 +6,7 @@ export async function finishPurchase (req: Request, res: Response) {
   const { cardId, password, amount } = req.body;
 
   await paymentsServices.finishPurchase(businessId, { cardId, password, amount });
-  res.send('Compra realizada com sucesso!');
+  res.send('Purchase made successfully!');
 }
 
 export async function finishOnlinePurchase (req: Request, res: Response) {
@@ -14,5 +14,5 @@ export async function finishOnlinePurchase (req: Request, res: Response) {
   const requestedInformations = req.body;
 
   await paymentsServices.finishOnlinePurchase(businessId, requestedInformations);
-  res.send('Compra realizada com sucesso!');
+  res.send('Purchase made successfully!');
 }

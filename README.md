@@ -110,7 +110,7 @@ PUT /card/activate/${cardId}
 #### Response:
 
 ```
-Cartão ativado com sucesso!
+Card activated successfully!
 ```
 
 #
@@ -208,7 +208,7 @@ PUT /card/block/${cardId}
 #### Response:
 
 ```
-Cartão bloqueado com sucesso!
+Card blocked successfully!
 ```
 
 #
@@ -238,7 +238,7 @@ PUT /card/unblock/${cardId}
 #### Response:
 
 ```
-Cartão desbloqueado com sucesso!
+Card successfully unlocked!
 ```
 
 #
@@ -274,7 +274,7 @@ POST /recharge/${cardId}
 #### Response:
 
 ```
-Cartão recarregado com sucesso!
+Card recharged successfully!
 ```
 
 #
@@ -321,6 +321,16 @@ POST /payment/online/${businessId}
 | `amount`         | `integer` | **Required**. payment amount       |
 
 `Expiration Date Format: "MM/YY"`
+
+###
+
+</br>
+
+#### Response:
+
+```
+Purchase made successfully!
+```
 
 #
 
