@@ -7,7 +7,8 @@ import * as cardRepository from '../repositories/cardRepository.js';
 import * as companyRepository from '../repositories/companyRepository.js';
 import * as employeeRepository from '../repositories/employeeRepository.js';
 
-export async function createCard(APIKey: any, cardDetails: any) {
+
+export async function createCard (APIKey: any, cardDetails: any) {
   const company:object = await companyRepository.findByApiKey(APIKey);
   if(!company) throw { code: 'NotFound', message: 'Empresa não encontrada.' }
   
@@ -34,17 +35,47 @@ export async function createCard(APIKey: any, cardDetails: any) {
   return;
 }
 
-export async function activateCard(id: number, cardData: any) {
+export async function activateCard (id: number, cardData: any) {
   const card: any = await cardRepository.findById(id);
   if(!card) throw { code: 'NotFound', message: 'Este cartão não existe.' }
   
   if(card.password) throw { code: 'BadRequest', message: 'Este cartão já foi ativado.' }
 
-  if (cardData.securityCode !== cryptr.decrypt(card.securityCode)) throw { code: 'Unauthorized', message: 'Código de segurança incorreto.' }
+  if(cardData.securityCode !== cryptr.decrypt(card.securityCode)) throw { code: 'Unauthorized', message: 'Código de segurança incorreto.' }
 
   const passwordHash: string = bcrypt.hashSync(cardData.password, 10);
 
   await cardRepository.update(id, { password: passwordHash, isBlocked: false });
+
+  return;
+}
+
+export async function blockCard (id: number, password: string) {
+  const card: any = await cardRepository.findById(id);
+  if(!card) throw { code: 'NotFound', message: 'Este cartão não existe.' }
+
+  if(!card.password) throw { code: 'BadRequest', message: 'Este cartão ainda não foi ativado.' }
+
+  if(card.isBlocked) throw { code: 'BadRequest', message: 'Este cartão já está bloqueado.' }
+
+  if (!(bcrypt.compareSync(password, card.password))) throw { code: 'Unauthorized', message: 'Senha incorreta.' }
+
+  await cardRepository.update(id, { isBlocked: true });
+
+  return;
+}
+
+export async function unlockCard (id: number, password: string) {
+  const card: any = await cardRepository.findById(id);
+  if(!card) throw { code: 'NotFound', message: 'Este cartão não existe.' }
+
+  if(!card.password) throw { code: 'BadRequest', message: 'Este cartão ainda não foi ativado.' }
+
+  if(!card.isBlocked) throw { code: 'BadRequest', message: 'Este cartão não está bloqueado.' }
+
+  if (!(bcrypt.compareSync(password, card.password))) throw { code: 'Unauthorized', message: 'Senha incorreta.' }
+
+  await cardRepository.update(id, { isBlocked: false });
 
   return;
 }
