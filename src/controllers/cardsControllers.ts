@@ -5,8 +5,8 @@ export async function createCard (req: Request, res: Response) {
   const newCard: object = req.body;
   const { apikey } = req.headers;
 
-  await cardsService.createCard(apikey, newCard);
-  res.send("Cartão cadastrado com sucesso!");
+  const card: any = await cardsService.createCard(apikey, newCard);
+  res.send(card);
 }
 
 export async function activateCard (req: Request, res: Response) {

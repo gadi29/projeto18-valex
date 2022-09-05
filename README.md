@@ -2,7 +2,7 @@
 
 # Rotas de criação e gerenciamento de cartões:
 
-## Rota <span style="color:yellow"> **POST** </span>/card
+## Rota <span> **POST** </span>/card
 
 Essa é uma rota autenticada com um header http do tipo "x-api-key". Sua função é criar novos cartões para os funcionários.
 
@@ -16,7 +16,7 @@ O Body da requisição deve ser feito no seguinte formato:
 }
 ```
 
-## Rota <span style="color:orange"> **PUT** </span>/card/activate/:id
+## Rota <span> **PUT** </span>/card/activate/:id
 
 Essa é uma rota não autenticada. Sua função é ativar os cartões criados.
 
@@ -31,7 +31,7 @@ O Body da requisição deve ser feito no seguinte formato:
 }
 ```
 
-## Rota <span style="color:green"> **GET** </span>/card/:id
+## Rota <span> **GET** </span>/card/:id
 
 Essa é uma rota não autenticada. Sua função é mostrar as informações do cartão.
 
@@ -45,7 +45,19 @@ O Body da requisição deve ser feito no seguinte formato:
 }
 ```
 
-## Rota <span style="color:green"> **GET** </span>/card/balance/:id
+A resposta da requisição virá no seguinte formato:
+
+```json
+{
+  "number": "numero_do_cartao",
+  "cardholderName": "nome_do_funcionario",
+  "expirationDate": "data_de_expiracao",
+  "securityCode": "cvc_do_cartao",
+  "cardSituation": "bloqueado/desbloqueado"
+}
+```
+
+## Rota <span> **GET** </span>/card/balance/:id
 
 Essa é uma rota não autenticada. Sua função é verificar o extrato dos cartões.
 
@@ -63,7 +75,7 @@ A resposta da requisição virá no seguinte formato:
 	]
 ```
 
-## Rotas <span style="color:orange"> **PUT** </span>/card/block/:id e /card/unblock/:id
+## Rotas <span> **PUT** </span>/card/block/:id e /card/unblock/:id
 
 Rotas não autenticadas, possuem o mesmo funcionamento, tem o intuíto de bloquear e desbloquear um determinado cartão, respectivamente.
 
@@ -77,9 +89,9 @@ O Body da requisição deve ser feito no seguinte formato:
 }
 ```
 
-# Rotas de recarga e compra:
+# Rotas de recarga e compras:
 
-## Rota <span style="color:yellow"> **POST** </span>/recharge/:id
+## Rota <span> **POST** </span>/recharge/:id
 
 Essa é uma rota autenticada com um header http do tipo "x-api-key". Sua função é recarregar os cartões para os funcionários.
 
@@ -91,7 +103,7 @@ O Body da requisição deve ser feito no seguinte formato:
 }
 ```
 
-## Rota <span style="color:yellow"> **POST** </span>/payment/:businessId
+## Rota <span> **POST** </span>/payment/:businessId
 
 Essa é uma rota não autenticada. Sua função é permitir aos funcionários fazerem compras em estabelecimentos **do mesmo tipo** dos seus cartões.
 
@@ -105,7 +117,7 @@ O Body da requisição deve ser feito no seguinte formato:
 }
 ```
 
-## Rota <span style="color:yellow"> **POST** </span>/payment/online/:businessId
+## Rota <span> **POST** </span>/payment/online/:businessId
 
 Essa é uma rota não autenticada. Sua função é permitir aos funcionários fazerem compras online em estabelecimentos **do mesmo tipo** dos seus cartões.
 

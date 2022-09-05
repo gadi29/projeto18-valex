@@ -39,7 +39,7 @@ export async function createCard (APIKey: any, cardDetails: any) {
 
   await cardRepository.insert({ ...cardDetails, number, cardholderName, expirationDate, securityCode, isBlocked: true });
 
-  return;
+  return { cardholderName, number, expirationDate, securityCode: cryptr.decrypt(securityCode), type: cardDetails.type, isVirtual: cardDetails.isVirtual };
 }
 
 export async function activateCard (id: number, cardData: any) {
@@ -84,8 +84,14 @@ export async function balanceCard (id: number) {
   let totalTransactionsAmount: number = 0;
   let totalRechargesAmount: number = 0;
 
-  if(transactions.length > 0) transactions.map((transaction: any) => totalTransactionsAmount += transaction.amount);
-  if(recharges.length > 0) recharges.map((recharge: any) => totalRechargesAmount += recharge.amount);
+  if(transactions.length > 0) transactions.map((transaction: any) => {
+    totalTransactionsAmount += transaction.amount;
+    transaction.timestamp = dayjs(transaction.timestamp).format('DD/MM/YYYY').toString();
+  });
+  if(recharges.length > 0) recharges.map((recharge: any) => {
+    totalRechargesAmount += recharge.amount;
+    recharge.timestamp = dayjs(recharge.timestamp).format('DD/MM/YYYY').toString();
+  });
 
   const balance: number = (totalRechargesAmount - totalTransactionsAmount);
 
