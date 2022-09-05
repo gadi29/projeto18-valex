@@ -368,17 +368,17 @@ Create database
   cd ../../..
 ```
 
+Run build
+
+```bash
+  npm run build
+```
+
 Start the server
 
 ```bash
   npm run start
 ```
-
-</br>
-
-## Lessons Learned
-
-In this project I learned a lot about how to structure an API with TypeScript
 
 </br>
 
