@@ -17,6 +17,21 @@ export async function activateCard (req: Request, res: Response) {
   res.send("Cartão ativado com sucesso!");
 }
 
+export async function visualizeCard (req: Request, res: Response) {
+  const cardId: number = Number(req.params.id);
+  const password: string = req.body.password;
+
+  const card: any = await cardsService.visualizeCard(cardId, password);
+  res.send(card);
+}
+
+export async function balanceCard (req: Request, res: Response) {
+  const id: number = Number(req.params.id);
+
+  const balance: object = await cardsService.balanceCard(id);
+  res.send(balance);
+}
+
 export async function blockCard (req: Request, res: Response) {
   const id: number = Number(req.params.id);
   const password: string = req.body.password;
@@ -25,10 +40,10 @@ export async function blockCard (req: Request, res: Response) {
   res.send("Cartão bloqueado com sucesso!");
 }
 
-export async function unlockCard (req: Request, res: Response) {
+export async function unblockCard (req: Request, res: Response) {
   const id: number = Number(req.params.id);
   const password: string = req.body.password;
 
-  await cardsService.unlockCard(id, password);
+  await cardsService.unblockCard(id, password);
   res.send("Cartão desbloqueado com sucesso!");
 }
