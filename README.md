@@ -1,134 +1,396 @@
 # projeto18-valex
+A Typescript designed project to manage benefit cards among companies and employees.
 
-# Rotas de criação e gerenciamento de cartões:
 
-## Rota <span> **POST** </span>/card
+<p align="center">
+  <img  src="https://cdn.iconscout.com/icon/free/png-256/credit-card-2650080-2196542.png">
+</p>
+<h1 align="center">
+  Valex
+</h1>
+<div align="center">
 
-Essa é uma rota autenticada com um header http do tipo "x-api-key". Sua função é criar novos cartões para os funcionários.
+  <h3>Built With</h3>
 
-O Body da requisição deve ser feito no seguinte formato:
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" height="30px"/>
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" height="30px"/>
+  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" height="30px"/>  
+  <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express.js&logoColor=white" height="30px"/>
+  <!-- Badges source: https://dev.to/envoy_/150-badges-for-github-pnk -->
+</div>
+
+<br/>
+
+# Description
+
+Valex simulates an API that manages a benefit card, generally made available by companies to their employees.
+
+</br>
+
+## Features
+
+-   Get the card balance and transactions
+-   Create cards
+-   Activate / Block / Unblock a card
+-   Recharge a card
+-   Make card payments with online payment option
+
+</br>
+
+## API Reference
+
+### Create a card
+
+```http
+POST /card
+```
+
+#### Request:
+
+| Body         | Type     | Description                              |
+| :------------| :------- | :--------------------------------------- |
+| `employeeId` | `integer`| **Required**. user Id                    |
+| `isVirtual`  | `boolean`| **Required**. if card is virtual or not  |
+| `type`       | `string` | **Required**. type of card benefit       |
+
+`Valid types: [groceries, restaurant, transport, education, health]`
+
+####
+
+| Headers     | Type     | Description           |
+| :---------- | :------- | :-------------------- |
+| `apikey` | `string` | **Required**. api key |
+
+####
+
+</br>
+
+#### Response:
 
 ```json
 {
-  "employeeId": id_do_funcionario, //number
-  "isVirtual": true/false, //boolean
-  "type": "tipo_do_cartão" //string, pode ser dos seguintes tipos: groceries, restaurant, transport, education, health
+  "cardholderName": "NAME N NAME",
+  "number": "1111-1111-1111-1111",
+  "expirationDate": "MM/YY",
+  "securityCode": "111",
+  "type": "card type",
+  "isVirtual": false
 }
 ```
 
-## Rota <span> **PUT** </span>/card/activate/:id
+#
 
-Essa é uma rota não autenticada. Sua função é ativar os cartões criados.
+### Activate a card
 
-O "id" passado na rota é o id do cartão a ser ativado.
-
-O Body da requisição deve ser feito no seguinte formato:
-
-```json
-{
-  "securityCode": "cvc_do_cartao", //string
-  "password": "senha_escolhida" //string
-}
+```http
+PUT /card/activate/${cardId}
 ```
 
-## Rota <span> **GET** </span>/card/:id
+#### Request:
 
-Essa é uma rota não autenticada. Sua função é mostrar as informações do cartão.
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `cardId` | `integer` | **Required**. card Id |
 
-O "id" passado na rota é o id do cartão de que se deseja as informações.
+###
 
-O Body da requisição deve ser feito no seguinte formato:
+| Body             | Type     | Description                        |
+| :--------------- | :------- | :--------------------------------- |
+| `password`       | `string` | **Required**. card password        |
+| `securityCode`   | `string` | **Required**. card cvv             |
 
-```json
-{
-  "password": "senha_do_cartao" //string
-}
+`Password length: 4`
+
+`Password pattern: only numbers`
+
+###
+
+</br>
+
+#### Response:
+
+```
+Cartão ativado com sucesso!
 ```
 
-A resposta da requisição virá no seguinte formato:
+#
 
-```json
-{
-  "number": "numero_do_cartao",
-  "cardholderName": "nome_do_funcionario",
-  "expirationDate": "data_de_expiracao",
-  "securityCode": "cvc_do_cartao",
-  "cardSituation": "bloqueado/desbloqueado"
-}
+### Get card informations
+
+```http
+GET /card/${cardId}
 ```
 
-## Rota <span> **GET** </span>/card/balance/:id
+#### Request:
 
-Essa é uma rota não autenticada. Sua função é verificar o extrato dos cartões.
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `cardId` | `integer` | **Required**. card Id |
 
-O "id" passado na rota é o id do cartão de que se deseja o extrato.
+###
 
-A resposta da requisição virá no seguinte formato:
+| Body             | Type     | Description                        |
+| :--------------- | :------- | :--------------------------------- |
+| `password`       | `string` | **Required**. card password        |
 
-```json
-"balance": 35000,
-  "transactions": [
-		{ "id": 1, "cardId": 1, "businessId": 1, "businessName": "DrivenEats", "timestamp": "22/01/2022", "amount": 5000 }
-	]
-  "recharges": [
-		{ "id": 1, "cardId": 1, "timestamp": "21/01/2022", "amount": 40000 }
-	]
-```
+####
 
-## Rotas <span> **PUT** </span>/card/block/:id e /card/unblock/:id
+</br>
 
-Rotas não autenticadas, possuem o mesmo funcionamento, tem o intuíto de bloquear e desbloquear um determinado cartão, respectivamente.
-
-O "id" passado na rota é o id do cartão que se deseja bloquear/desbloquear.
-
-O Body da requisição deve ser feito no seguinte formato:
+#### Response:
 
 ```json
-{
-  "password": "senha_do_cartao" //string
-}
+  {
+    "number": "1111-1111-1111-1111",
+    "cardholderName": "NAME N NAME",
+    "expirationDate": "MM/YY",
+    "securityCode": "111",
+    "cardSituation": "blocked/unblocked"
+  }
 ```
 
-# Rotas de recarga e compras:
+#
 
-## Rota <span> **POST** </span>/recharge/:id
+### Get card balance
 
-Essa é uma rota autenticada com um header http do tipo "x-api-key". Sua função é recarregar os cartões para os funcionários.
+```http
+GET /card/balance/${cardId}
+```
 
-O Body da requisição deve ser feito no seguinte formato:
+#### Request:
+
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `cardId` | `integer` | **Required**. card Id |
+
+###
+
+</br>
+
+#### Response:
 
 ```json
-{
-  "amount": "valor_recarga" //number
-}
+  {
+    "balance": 1000,
+    "transactions": [
+      { "id": 1, "cardId": 1, "businessId": 1, "businessName": "BUSINESS", "timestamp": "01/01/2022", "amount": 1000 }
+    ]
+    "recharges": [
+      { "id": 1, "cardId": 1, "timestamp": "01/01/2022", "amount": 2000 }
+    ]
+  }
 ```
 
-## Rota <span> **POST** </span>/payment/:businessId
+#
 
-Essa é uma rota não autenticada. Sua função é permitir aos funcionários fazerem compras em estabelecimentos **do mesmo tipo** dos seus cartões.
+### Block a card
 
-O Body da requisição deve ser feito no seguinte formato:
-
-```json
-{
-  "cardId": "id_do_cartão", //number
-  "password": "senha_do_cartão", //string
-  "amount": "valor_da_compra" //number
-}
+```http
+PUT /card/block/${cardId}
 ```
 
-## Rota <span> **POST** </span>/payment/online/:businessId
+#### Request:
 
-Essa é uma rota não autenticada. Sua função é permitir aos funcionários fazerem compras online em estabelecimentos **do mesmo tipo** dos seus cartões.
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `cardId` | `integer` | **Required**. card Id |
 
-O Body da requisição deve ser feito no seguinte formato:
+###
 
-```json
-{
-  "number": "numero_do_cartão", //string
-  "cardholderName": "nome_do_funcionario", //string, deve ser exatamente como está no cartão
-  "expirationDate": "data_de_expiracao", //string, está no formato MM/YY
-  "securityCode": "cvc_do_cartao", //string,
-  "amount": "valor_da_compra" //number
-}
+| Body             | Type     | Description                        |
+| :--------------- | :------- | :--------------------------------- |
+| `password`       | `string` | **Required**. card password        |
+
+###
+
+</br>
+
+#### Response:
+
 ```
+Cartão bloqueado com sucesso!
+```
+
+#
+
+### Unblock a card
+
+```http
+PUT /card/unblock/${cardId}
+```
+
+#### Request:
+
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `cardId` | `integer` | **Required**. card Id |
+
+###
+
+| Body             | Type     | Description                        |
+| :--------------- | :------- | :--------------------------------- |
+| `password`       | `string` | **Required**. card password        |
+
+###
+
+</br>
+
+#### Response:
+
+```
+Cartão desbloqueado com sucesso!
+```
+
+#
+
+### Recharge a card
+
+```http
+POST /recharge/${cardId}
+```
+
+#### Request:
+
+| Headers     | Type     | Description           |
+| :---------- | :------- | :-------------------- |
+| `apikey` | `string` | **Required**. api key |
+
+####
+
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `cardId` | `integer` | **Required**. card Id |
+
+###
+
+| Body             | Type      | Description                        |
+| :--------------- | :-------- | :--------------------------------- |
+| `amount`         | `integer` | **Required**. recharge amount      |
+
+###
+
+</br>
+
+#### Response:
+
+```
+Cartão recarregado com sucesso!
+```
+
+#
+
+### Card payments
+
+```http
+POST /payment/${businessId}
+```
+#### Request:
+
+| Params      | Type      | Description           |
+| :---------- | :-------- | :-------------------- |
+| `businessId` | `integer` | **Required**. business Id |
+
+###
+
+| Body             | Type      | Description                        |
+| :--------------- | :-------- | :--------------------------------- |
+| `cardId`         | `integer` | **Required**. card Id              |
+| `password`       | `string`  | **Required**. card password        |
+| `amount`         | `integer` | **Required**. payment amount       |
+
+#
+
+```http
+POST /payment/online/${businessId}
+```
+
+#### Request:
+
+| Params       | Type      | Description               |
+| :----------  | :-------- | :--------------------     |
+| `businessId` | `integer` | **Required**. business Id |
+
+###
+
+| Body             | Type      | Description                        |
+| :--------------- | :-------- | :--------------------------------- |
+| `number`         | `string`  | **Required**. card number          |
+| `cardholderName` | `string`  | **Required**. name in card         |
+| `expirationDate` | `string`  | **Required**. card expiration date |
+| `securityCode`   | `string`  | **Required**. card CVV             |
+| `amount`         | `integer` | **Required**. payment amount       |
+
+`Expiration Date Format: "MM/YY"`
+
+#
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`DATABASE_URL = postgres://UserName:Password@Hostname:5432/DatabaseName`
+
+`PORT = number #recommended:5000`
+
+`SECRET = any key to encrypt/decrypt CVV card number`
+
+</br>
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/gadi29/projeto18-valex
+```
+
+Go to the project directory
+
+```bash
+  cd projeto18-valex/
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Create database
+
+```bash
+  cd src/db/dbConfig
+```
+```bash
+  bash ./create-database
+```
+```bash
+  cd ../../..
+```
+
+Start the server
+
+```bash
+  npm run start
+```
+
+</br>
+
+## Lessons Learned
+
+In this project I learned a lot about how to structure an API with TypeScript
+
+</br>
+
+## Acknowledgements
+
+-   [Awesome Badges](https://github.com/Envoy-VC/awesome-badges)
+
+</br>
+
+## Authors
+
+-   Gadiel Azevedo.
+<br/>
+
+#
